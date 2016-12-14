@@ -1,3 +1,41 @@
+#Configurando o plugin de autenticação do mosquitto para o influunt
+
+1. Baixe esse repositório e o código fonte do mosquitto
+2. Altere o arquivo config.mk para o seguinte:
+```
+# Select your backends from this list
+BACKEND_CDB ?= no
+BACKEND_MYSQL ?= yes
+BACKEND_SQLITE ?= no
+BACKEND_REDIS ?= no
+BACKEND_POSTGRES ?= no
+BACKEND_LDAP ?= no
+BACKEND_HTTP ?= no
+BACKEND_JWT ?= no
+BACKEND_MONGO ?= no
+
+# Specify the path to the Mosquitto sources here
+MOSQUITTO_SRC =...
+
+# Specify the path the OpenSSL here
+# No mac, para usar o openssl do brew
+OPENSSLDIR = /usr/local/Cellar/openssl/1.0.2h_1
+```
+3. Execute ```make```
+4. Adicione ao arquivo de configuracao do mosquitto:
+```
+auth_plugin caminho/para/auth-plug.so
+auth_opt_backends mysql
+auth_opt_host localhost
+auth_opt_port 3306
+auth_opt_dbname influuntdev
+auth_opt_user root
+#auth_opt_pass senha  
+auth_opt_userquery SELECT CASE '%s' WHEN 'central' then '<HASH da Senha da Central>' else(SELECT password_hash FROM controladores_fisicos WHERE id = '%s') END;
+auth_opt_superquery SELECT IF('central' = '%s',1,0) as v;
+#auth_opt_aclquery SELECT topic FROM acls WHERE (username = '%s') AND (rw >= %d)
+#auth_opt_anonusername AnonymouS
+```
 # mosquitto-auth-plug
 
 This is a plugin to authenticate and authorize [Mosquitto] users from one

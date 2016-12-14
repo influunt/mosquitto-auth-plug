@@ -191,7 +191,7 @@ char *be_mysql_getuser(void *handle, const char *username, const char *password,
 		free(u);
 		return (NULL);
 	}
-	sprintf(query, conf->userquery, u);
+	sprintf(query, conf->userquery, u, u);
 	free(u);
 
 	// DEBUG puts(query);
